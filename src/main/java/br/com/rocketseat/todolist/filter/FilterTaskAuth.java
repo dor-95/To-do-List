@@ -65,6 +65,7 @@ public class FilterTaskAuth extends OncePerRequestFilter {
                 }
 
                 // Segue o fluxo normal da aplicação
+                request.setAttribute("idUser", user.getId());
                 filterChain.doFilter(request, response);
     }
 }
