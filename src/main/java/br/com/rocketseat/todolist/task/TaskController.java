@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,5 +50,10 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.CREATED).body(taskCreated);
     }
 
-
+    @GetMapping("/")
+    public ResponseEntity list(HttpServletRequest request) {
+        Object idUser = request.getAttribute("idUser");
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(this.taskRepository.findByIdUser((UUID) idUser));
+    }
 }
