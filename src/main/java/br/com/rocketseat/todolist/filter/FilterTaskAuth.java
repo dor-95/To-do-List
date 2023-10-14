@@ -32,7 +32,7 @@ public class FilterTaskAuth extends OncePerRequestFilter {
 
                 // Verifica a rota
                 String servletPath = request.getServletPath();
-                if (!servletPath.equals("/tasks/")) {
+                if (!servletPath.startsWith("/tasks/")) {
                     filterChain.doFilter(request, response);
                     return;
                 }
