@@ -12,6 +12,10 @@
 - [x] Atualização de tarefas
 - [x] Realizado Deploy no Render
 
+## Desafios
+
+- [ ] Adicionar camada de Service;
+
 ## Routes
 
 ![Routes](routes.png)
