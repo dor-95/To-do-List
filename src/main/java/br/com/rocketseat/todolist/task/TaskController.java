@@ -33,6 +33,7 @@ public class TaskController {
     @PostMapping("/")
     public ResponseEntity create(@RequestBody TaskModel taskModel, HttpServletRequest request) {
         var idUser = request.getAttribute("idUser");
+
         taskModel.setIdUser((UUID) idUser);
 
         return this.taskService.createdTask(taskModel);
@@ -40,9 +41,10 @@ public class TaskController {
 
     @GetMapping("/")
     public ResponseEntity list(HttpServletRequest request) {
-        Object idUser = request.getAttribute("idUser");
+        var idUser = request.getAttribute("idUser");
+
         return ResponseEntity.status(HttpStatus.OK)
-            .body(this.taskRepository.findByIdUser((UUID) idUser));
+            .body(this.taskService.findUserById((UUID) idUser));
     }
 
     @PutMapping("/{id}")

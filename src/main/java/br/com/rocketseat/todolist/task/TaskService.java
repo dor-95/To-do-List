@@ -1,6 +1,8 @@
 package br.com.rocketseat.todolist.task;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,4 +40,7 @@ public class TaskService {
         return ResponseEntity.status(HttpStatus.CREATED).body(taskCreated);
     }
 
+    public List<TaskModel> findUserById(UUID idUser) {
+        return this.taskRepository.findByIdUser(idUser);
+    }
 }
