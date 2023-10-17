@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import br.com.rocketseat.todolist.utils.Utils;
+
 @Service
 public class TaskService {
     
@@ -42,5 +44,31 @@ public class TaskService {
 
     public List<TaskModel> findUserById(UUID idUser) {
         return this.taskRepository.findByIdUser(idUser);
+    }
+
+    public ResponseEntity update(TaskModel taskModel, UUID idTask, Object idUser) {
+
+        TaskModel task = this.taskRepository.findById(idTask).orElse(null);
+
+        if (task == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Tarefa não encontrada");
+        }
+
+        if (!task.getIdUser().equals(idUser)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Usuário não tem permissão para alterar essa tarefa");
+        }
+
+        Utils.copyNonNullProperties(taskModel, task);
+
+        if (!task.getIdUser().equals(idUser)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Usuário não tem permissão para realizar essa alteração");
+        }
+
+        TaskModel taskUpdated = this.taskRepository.save(task);
+
+        return ResponseEntity.status(HttpStatus.OK).body(taskUpdated);
     }
 }

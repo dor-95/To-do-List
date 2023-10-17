@@ -1,6 +1,5 @@
 package br.com.rocketseat.todolist.task;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,19 +13,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.rocketseat.todolist.utils.Utils;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
     
-    ITaskRepository taskRepository;
     TaskService taskService;
 
     @Autowired
-    public TaskController(ITaskRepository taskRepository, TaskService taskService) {
-        this.taskRepository = taskRepository;
+    public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
 
@@ -49,26 +45,8 @@ public class TaskController {
 
     @PutMapping("/{id}")
     public ResponseEntity update(@RequestBody TaskModel taskModel, @PathVariable UUID id, HttpServletRequest request) {
-        TaskModel task = this.taskRepository.findById(id).orElse(null);
-        if (task == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Tarefa não encontrada");
-        }
-
-        Object idUser = request.getAttribute("idUser");
-        if (!task.getIdUser().equals(idUser)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Usuário não tem permissão para alterar essa tarefa");
-        }
-
-        Utils.copyNonNullProperties(taskModel, task);
-
-        if (!task.getIdUser().equals(idUser)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Usuário não tem permissão para realizar essa alteração");
-        }
-
-        TaskModel taskUpdated = this.taskRepository.save(task);
-        return ResponseEntity.status(HttpStatus.OK).body(taskUpdated);
+        var idUser = request.getAttribute("idUser");
+        
+        return taskService.update(taskModel, id, idUser);
     }
 }
