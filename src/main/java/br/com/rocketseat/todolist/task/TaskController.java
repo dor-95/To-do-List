@@ -22,10 +22,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public class TaskController {
     
     ITaskRepository taskRepository;
+    TaskService taskService;
 
     @Autowired
-    public TaskController(ITaskRepository taskRepository) {
+    public TaskController(ITaskRepository taskRepository, TaskService taskService) {
         this.taskRepository = taskRepository;
+        this.taskService = taskService;
     }
 
     @PostMapping("/")
@@ -33,24 +35,7 @@ public class TaskController {
         var idUser = request.getAttribute("idUser");
         taskModel.setIdUser((UUID) idUser);
 
-        LocalDateTime currentDate = LocalDateTime.now();
-        if (currentDate.isAfter(taskModel.getStartAt())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("A data de início deve ser maior do que a data atual");
-        }
-
-        if (currentDate.isAfter(taskModel.getEndAt())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("A data de término deve ser maior do que a data atual");
-        }
-
-        if (taskModel.getStartAt().isAfter(taskModel.getEndAt())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("A data de início deve ser menor do que a data de término");
-        }
-
-        TaskModel taskCreated = this.taskRepository.save(taskModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(taskCreated);
+        return this.taskService.createdTask(taskModel);
     }
 
     @GetMapping("/")
